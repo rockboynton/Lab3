@@ -1,87 +1,55 @@
+/*
+ * SE1011-011
+ * Fall 2017
+ * Assignment: Lab 3 GUI
+ * Author: Rock Boynton
+ * Created: 9/21/2017
+ */
 
 package boyntonrl;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Lab3GUI {
+    /**
+     * This program asks the user if they are a single filer or married joint filer. It then asks for their expected
+     * earned income for 2018 and displays the estimated taxes they will be required to pay by March 15, 2018.
+     * This is the GUI implementation:
+     */
     public static void main(String args[]) {
-        String singleOrMarried = JOptionPane.showInputDialog(null, "Are you a single filer or married joint filer? " +
-                "Input s for single or m for married: ");
-        String strExpectedEarnedIncome = JOptionPane.showInputDialog(null, "What is you expected earned income for 2018 " +
-                "expressed as a number with no commas? ");
-        int intExpectedEarnedIncome = Integer.parseInt(strExpectedEarnedIncome);
+        String singleOrMarried = JOptionPane.showInputDialog(null, "Are you a single filer" +
+                " or married joint filer? Input s for single or m for married: ");
+        String strExpectedEarnedIncome = JOptionPane.showInputDialog(null, "What is your" +
+                " expected earned income for 2018 expressed as a number with no commas? ");
 
-        final int FIRST_BRACKET_INCOME_SINGLE = 9325;
-        final int FIRST_BRACKET_INCOME_MARRIED = 18650;
-        final int SECOND_BRACKET_INCOME_SINGLE = 37950;
-        final int SECOND_BRACKET_INCOME_MARRIED = 75900;
-        final int THIRD_BRACKET_INCOME_SINGLE = 91900;
-        final int THIRD_BRACKET_INCOME_MARRIED = 153100;
-        final int FOURTH_BRACKET_INCOME_SINGLE = 191650;
-        final int FOURTH_BRACKET_INCOME_MARRIED = 233350;
-        final int FIFTH_BRACKET_INCOME_SINGLE = 416700;
-        final int FIFTH_BRACKET_INCOME_MARRIED = 416700;
-        final int SIXTH_BRACKET_INCOME_SINGLE = 418400;
-        final int SIXTH_BRACKET_INCOME_MARRIED = 470700;
-        final int SEVENTH_BRACKET_INCOME_SINGLE = intExpectedEarnedIncome - 418401;
-        final int SEVENTH_BRACKET_INCOME_MARRIED = intExpectedEarnedIncome - 470701;
+        final int EXPECTED_EARNED_INCOME = Integer.parseInt(strExpectedEarnedIncome);
+        final int[] TAX_BRACKET_INCOMES_SINGLE = {0, 9325, 37950, 91900, 191650, 416700, 418400, 418401};
+        final double[] TAX_BRACKET_RATES = {0, .10, .15, .25, .28, .33, .35, .396};
+        final int[] TAX_BRACKET_INCOMES_MARRIED = {0, 18650, 75900, 153100, 233350, 416700, 470700, 470701};
+        final int NUMBER_OF_BRACKETS = TAX_BRACKET_RATES.length;
 
-        final double FIRST_BRACKET_RATE = 0.10;
-        final double SECOND_BRACKET_RATE = 0.15;
-        final double THIRD_BRACKET_RATE = 0.25;
-        final double FOURTH_BRACKET_RATE = 0.28;
-        final double FIFTH_BRACKET_RATE = 0.33;
-        final double SIXTH_BRACKET_RATE = 0.35;
-        final double SEVENTH_BRACKET_RATE = 0.396;
+        double estimatedTax = 0; // Initialize total tax variable
+        int index = 1; // Index used for arrays declared above
 
-        double estimatedTax = 0.0;
-        int taxBracketsSingle[] = new int[7];
+        int[] taxBracket = {};                                               //
+        if (singleOrMarried.equals("s")) {                                   //
+            taxBracket = TAX_BRACKET_INCOMES_SINGLE;                         //  Initialize new array to reference
+        } else if (singleOrMarried.equals("m")) {                            //  tax bracket determined by user input
+            taxBracket = TAX_BRACKET_INCOMES_MARRIED;                        //
+        }                                                                    //
 
-
-        if (singleOrMarried.equals("s")) {
-            if (intExpectedEarnedIncome > 0) {
-                if (intExpectedEarnedIncome < FIRST_BRACKET_INCOME_SINGLE) {
-                    estimatedTax += (intExpectedEarnedIncome * FIRST_BRACKET_RATE);
-                    intExpectedEarnedIncome = -1;
-                } else {
-                    estimatedTax += (FIRST_BRACKET_INCOME_SINGLE * FIRST_BRACKET_RATE);
-                    intExpectedEarnedIncome -= FIRST_BRACKET_INCOME_SINGLE;
-                }
+        while (index < NUMBER_OF_BRACKETS) { // Index will be out of range, defining end of loop
+            if (index == NUMBER_OF_BRACKETS - 1) {  // Last tax bracket is a little tricky
+                estimatedTax += (EXPECTED_EARNED_INCOME - taxBracket[index]) * TAX_BRACKET_RATES[index];
+            } else if (EXPECTED_EARNED_INCOME < taxBracket[index]) {
+                estimatedTax += (EXPECTED_EARNED_INCOME - taxBracket[index - 1]) * TAX_BRACKET_RATES[index]; // This condition would mean the income is less than than the
+                break;                                                                                       //  next tax bracket, therefore add tax to total then break
+            } else {
+                estimatedTax += (taxBracket[index] - taxBracket[index - 1]) * TAX_BRACKET_RATES[index]; // Add taxed income in bracket to total
             }
-
-            if (intExpectedEarnedIncome > FIRST_BRACKET_INCOME_SINGLE) {
-                if (intExpectedEarnedIncome < SECOND_BRACKET_INCOME_SINGLE) {
-                    estimatedTax += (intExpectedEarnedIncome * SECOND_BRACKET_RATE);
-                    intExpectedEarnedIncome = -1;
-                } else {
-                    estimatedTax += ((SECOND_BRACKET_INCOME_SINGLE - FIRST_BRACKET_INCOME_SINGLE) * SECOND_BRACKET_RATE);
-                    intExpectedEarnedIncome -= SECOND_BRACKET_INCOME_SINGLE;
-                }
-            }
-
-            if (intExpectedEarnedIncome > SECOND_BRACKET_INCOME_SINGLE) {
-                if (intExpectedEarnedIncome < THIRD_BRACKET_INCOME_SINGLE) {
-                    estimatedTax += (intExpectedEarnedIncome * THIRD_BRACKET_RATE);
-                    intExpectedEarnedIncome = -1;
-                } else {
-                    estimatedTax += (THIRD_BRACKET_INCOME_SINGLE * THIRD_BRACKET_RATE);
-                    intExpectedEarnedIncome -= THIRD_BRACKET_INCOME_SINGLE;
-                }
-            }
-            if (intExpectedEarnedIncome > THIRD_BRACKET_INCOME_SINGLE) {
-                if (intExpectedEarnedIncome < FOURTH_BRACKET_INCOME_SINGLE) {
-                    estimatedTax += (intExpectedEarnedIncome * FOURTH_BRACKET_RATE);
-                    intExpectedEarnedIncome = -1;
-                } else {
-                    estimatedTax += (FOURTH_BRACKET_INCOME_SINGLE * FOURTH_BRACKET_RATE);
-                    intExpectedEarnedIncome -= FOURTH_BRACKET_INCOME_SINGLE;
-                }
-            }
-            JOptionPane.showMessageDialog(null, "Your estimated taxes that you will be required to pay by March 15, 2018 is " +
-                    estimatedTax);
-
+            index ++; // Update index to move on to next tax bracket
         }
-    }
-}
+        JOptionPane.showMessageDialog(null, "Your estimated taxes that you will be required" +
+                " to pay by March 15, 2018 is $" + estimatedTax);
+    } // end main
+} // end class Lab3GUI
