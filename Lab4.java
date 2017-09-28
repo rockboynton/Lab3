@@ -23,7 +23,7 @@ public class Lab4 {
 
         do {
             WEEKS_LEFT = (int) (Math.random() * 40);
-            STARTING_AMOUNT_LINEAR = (int) (Math.random() * 5000);
+            STARTING_AMOUNT_LINEAR = (Math.random() * 5000);
             linearTotal = STARTING_AMOUNT_LINEAR;
             exponentialTotal  = 0.01;
             weeksLeftLoop = WEEKS_LEFT;
@@ -56,10 +56,11 @@ public class Lab4 {
                         inheritanceDifference);
             }
             System.out.println();
-            System.out.print("Do you want to play again? (1 for yes) or (0 for no): ");
+            System.out.println("Do you want to play again? (1 for yes) or (0 for no): ");
             playAgain = input.nextInt();
             System.out.println();
         } while (playAgain == 1);
+//        System.out.format("Week %2d Linear: $%.2f\n", numberOfWeeks, linearAmount);
     }
 }
 /*
